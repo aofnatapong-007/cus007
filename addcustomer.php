@@ -2,14 +2,13 @@
 <html>
 
 <head>
-    <title>User Registration11</title>
+    <title>User Registration</title>
 </head>
 
 <body>
     <h1>Add Customer</h1>
 
     <?php
-
     require 'connect.php';
 
     try {
@@ -34,33 +33,28 @@
 
         <select name="countryCode" required>
             <option value="">-- Select Country Code --</option>
-            <?php
-
-            foreach ($countries as $country) {
-            ?>
+            <?php foreach ($countries as $country) { ?>
                 <option value="<?php echo $country['CountryCode']; ?>">
                     <?php echo $country['CountryName'] . " (" . $country['CountryCode'] . ")"; ?>
                 </option>
-            <?php
-            }
-            ?>
+            <?php } ?>
         </select>
         <br><br>
 
         <input type="number" placeholder="OutStanding debt" name="outstandingDebt" step="0.01">
         <br><br>
         <input type="submit" value="Add Customer">
+        <a href="index.php"><button type="button">กลับสู่หน้าหลัก</button></a>
     </form>
 
+    <br>
     <?php
-
     if ($_SERVER["REQUEST_METHOD"] == "POST" && !empty($_POST['customerID'])):
         try {
             $sql = "INSERT INTO customer (CustomerID, Name, Birthdate, Email, CountryCode, OutstandingDebt) 
                     VALUES (:customerID, :Name, :birthdate, :email, :countryCode, :outstandingDebt)";
 
             $stmt = $conn->prepare($sql);
-
 
             $stmt->bindParam(':customerID', $_POST['customerID']);
             $stmt->bindParam(':Name', $_POST['Name']);
@@ -71,11 +65,15 @@
 
             if ($stmt->execute()):
                 echo '<p style="color:green;">Successfully added new customer!</p>';
+                // แจ้งเตือนและเด้งกลับหน้าแรกอัตโนมัติ
+                echo "<script>
+                        alert('เพิ่มข้อมูลลูกค้าสำเร็จ');
+                        window.location.href = 'index.php';
+                      </script>";
             else:
                 echo '<p style="color:red;">Failed to add customer.</p>';
             endif;
         } catch (PDOException $e) {
-
             echo '<p style="color:red;">Error: ' . $e->getMessage() . '</p>';
         }
 
